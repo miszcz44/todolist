@@ -59,19 +59,39 @@ public class Main {
             tasks.put(i-1,tmp);
         }
     }
-
+    public static String WyswietlPliki(File file) throws FileNotFoundException {
+        HashMap<Integer, String> liniePliku = new HashMap<>();
+        String plik = "";
+        System.out.println("Wybierz plik");
+        Scanner scan = new Scanner(file);
+        int tmp = 1;
+        while(scan.hasNextLine()){
+            liniePliku.put(tmp, scan.nextLine());
+            System.out.println(tmp + "." + scan.nextLine());
+            tmp += 1;
+        }
+        System.out.println(tmp + ".Wyjdź");
+        Scanner scanner = new Scanner(System.in);
+        int userChoice = scanner.nextInt();
+        while(!liniePliku.containsKey(userChoice) || userChoice != liniePliku.size() + 1) {
+            if (liniePliku.containsKey(userChoice)) {
+                plik = liniePliku.get(userChoice);
+            } else if (userChoice == liniePliku.size() + 1) {
+                plik = "Wyjdź";
+            }
+        }
+        return plik;
+    }
     static HashMap<Integer,String> tasks = new HashMap<>();
     public static void main(String[] args) throws IOException {
-
-         int userChoice = -1;
+        File file = new File("lista_plikow.txt");
+        int userChoice = -1;
          Scanner scanner = new Scanner(System.in);
          while(userChoice != 3) {
              System.out.println("Wybierz opcje:\n1.Wczytaj plik\n2.Stwórz plik\n3.Wyjdź");
              userChoice = scanner.nextInt();
              switch (userChoice) {
-                 case 1 -> WyswietlPliki();
-                 case 2 -> StworzPlik();
-                 case 3 -> break;
+                 case 1 -> WyswietlPliki(file);
              }
 
              userChoice = -1;
