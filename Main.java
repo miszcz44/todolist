@@ -1,9 +1,6 @@
 package com.Project;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
 public class Main {
@@ -34,11 +31,16 @@ public class Main {
         }
     }
 
-    public static void ZapiszDoPliku() throws IOException {
-        FileWriter writer = new FileWriter("todolist.txt");
+    public static void ZapiszDoPliku(String name) throws IOException {
+        FileWriter writer = new FileWriter(name);
         for (Integer task : tasks.keySet()) {
             writer.write(task.toString() + tasks.get(task) + "\n");
         }
+        writer.close();
+    }
+    public static void ZapiszPlik(String name) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter("lista_plikow.txt", true));
+        writer.write(name + "\n");
         writer.close();
     }
 
@@ -46,6 +48,7 @@ public class Main {
         File file = new File(fileChoice);
         Scanner scan = new Scanner(file);
         Integer num = 1;
+        tasks.clear();
         while (scan.hasNextLine()) {
             String tmp = scan.nextLine().replaceFirst(num.toString(), "");
             tasks.put(num, tmp);
@@ -69,20 +72,23 @@ public class Main {
         String plik = "";
         System.out.println("Wybierz plik");
         Scanner scan = new Scanner(file);
-        int tmp = 1;
+        Integer tmp = 1;
         while (scan.hasNextLine()) {
-            liniePliku.put(tmp, scan.nextLine());
-            System.out.println(tmp + "." + scan.nextLine());
+            String linia = scan.nextLine();
+            liniePliku.put(tmp, linia);
+            System.out.println(tmp + "." + linia);
             tmp += 1;
         }
         System.out.println(tmp + ".Wyjdź");
         Scanner scanner = new Scanner(System.in);
-        int userChoice = -1;
+        Integer userChoice = -1;
         while (!liniePliku.containsKey(userChoice)) {
             userChoice = scanner.nextInt();
             if (liniePliku.containsKey(userChoice)) {
                 plik = liniePliku.get(userChoice);
-            } else if (userChoice == liniePliku.size() + 1) {
+                System.out.println("lambada");
+                break;
+            } else if (userChoice == liniePliku.size() + 1){
                 plik = "Wyjdź";
                 break;
             }
@@ -106,25 +112,24 @@ public class Main {
             userChoice = scanner.nextInt();
             switch (userChoice) {
                 case 1:
-                    if(WyswietlPliki(file) == "Wyjdź") {
+                    fileChoice = WyswietlPliki(file);
+                    if (fileChoice == "Wyjdź") {
                         continue;
                     }
-                    else{
-                        fileChoice = WyswietlPliki(file);
-                    }
+                    break;
                 case 2:
                     System.out.println("Podaj nazwę pliku:");
                     scanner.nextLine();
                     fileChoice = scanner.nextLine();
+                    ZapiszPlik(fileChoice);
                     StworzPlik(fileChoice);
+                    break;
                 case 3:
+                    userChoice = -4312;
                     break;
             }
-
-
-            userChoice = -1;
             WczytajZPliku(fileChoice);
-            while (userChoice != 5) {
+            while (userChoice != -4312) {
                 System.out.println("Wybierz opcje\n1.Dodaj zadanie\n2.Wyświetl zadania\n3.Usuń zadanie\n4.Zapisz zmiany w pliku\n5.Wyjdź");
                 userChoice = scanner.nextInt();
                 //scanner.close();
@@ -136,7 +141,7 @@ public class Main {
                     System.out.println("Podaj numer zadania do usunięcia:");
                     UsunZadanie(scanner.nextInt());
                 } else if (userChoice == 4) {
-                    ZapiszDoPliku();
+                    ZapiszDoPliku(fileChoice);
                 } else if (userChoice == 5) {
                     break;
                 } else {
