@@ -95,6 +95,35 @@ public class Main {
         }
         return plik;
     }
+    public static void UsunPlik(String name) throws IOException {
+        File usuniety = new File(name);
+        usuniety.delete();
+    }
+
+    public static void UsunNazwePliku(String name, File file) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        File tempFile = new File("tempfile.txt");
+        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+        String currentLine;
+        while((currentLine = reader.readLine()) != null){
+            String trimmedLine = currentLine.trim();
+            if(trimmedLine.equals(name)) continue;
+            writer.write(currentLine + System.getProperty("line.separator"));
+        }
+        reader.close();
+        writer.close();
+        BufferedReader reader2 = new BufferedReader(new FileReader(tempFile));
+        BufferedWriter writer2 = new BufferedWriter(new FileWriter(file));
+        writer2.write("");
+        while((currentLine = reader2.readLine()) != null){
+            writer2.write(currentLine + System.getProperty("line.separator"));
+        }
+        writer2.close();
+        reader2.close();
+        BufferedWriter writer3 = new BufferedWriter(new FileWriter(tempFile));
+        writer3.write("");
+        writer3.close();
+    }
     public static void StworzPlik(String name) throws IOException {
         File file = new File(name);
         file.createNewFile();
@@ -108,7 +137,8 @@ public class Main {
         String fileChoice = "";
         Scanner scanner = new Scanner(System.in);
         while (userChoice != -4312) {
-            System.out.println("Wybierz opcje:\n1.Wczytaj plik\n2.Stwórz plik\n3.Wyjdź");
+            System.out.println("Wybierz opcje:\n1.Wczytaj plik\n2.Stwórz plik\n3.Usuń plik\n4.Wyjdź");
+            //scanner.nextInt();
             userChoice = scanner.nextInt();
             switch (userChoice) {
                 case 1:
@@ -125,10 +155,19 @@ public class Main {
                     StworzPlik(fileChoice);
                     break;
                 case 3:
+                    System.out.println("Podaj nazwę pliku do usunięcia: ");
+                    scanner.nextLine();
+                    String fileToRemove = scanner.nextLine();
+                    UsunPlik(fileToRemove);
+                    UsunNazwePliku(fileToRemove,file);
+                    continue;
+                case 4:
                     userChoice = -4312;
                     break;
             }
-            WczytajZPliku(fileChoice);
+            if(userChoice != -4312) {
+                WczytajZPliku(fileChoice);
+            }
             while (userChoice != -4312) {
                 System.out.println("Wybierz opcje\n1.Dodaj zadanie\n2.Wyświetl zadania\n3.Usuń zadanie\n4.Zapisz zmiany w pliku\n5.Wyjdź");
                 userChoice = scanner.nextInt();
